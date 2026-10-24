@@ -1,0 +1,103 @@
+identity:
+  author: mrkeyoe
+  name: cost_aware_strategy
+  label:
+    en_US: Cost-Aware Agent
+    zh_Hans: 成本感知 Agent
+  description:
+    en_US: Budget-aware planning loop with relative cost estimation and degradation prompts.
+    zh_Hans: 带相对成本估算与预算降级的规划循环。
+parameters:
+  - name: total_budget
+    type: number
+    required: true
+    default: 100
+    label:
+      en_US: Total budget (relative units)
+      zh_Hans: 总预算（相对单位）
+    help:
+      en_US: Whole-run budget in relative cost units. Calls whose estimated cost would exceed the remaining budget are blocked.
+      zh_Hans: 单次 Agent 运行的总预算（相对成本单位）。估算成本超出剩余预算的调用会被阻止。
+  - name: cost_overrides
+    type: string
+    required: false
+    default: "{}"
+    label:
+      en_US: Cost overrides (JSON)
+      zh_Hans: 工具成本覆盖（JSON）
+    help:
+      en_US: 'Per-tool static cost, e.g. {"web_search": 20, "db.scan": 50}. Takes precedence over the metadata model.'
+      zh_Hans: '按工具名覆盖静态成本，例如 {"web_search": 20, "db.scan": 50}；优先级高于元数据估算。'
+  - name: degrade_enabled
+    type: boolean
+    required: true
+    default: true
+    label:
+      en_US: Enable degradation
+      zh_Hans: 启用降级
+    help:
+      en_US: When enabled, an over-budget call is blocked and a structured re-plan hint is injected. When disabled the run halts immediately.
+      zh_Hans: 开启时超预算调用被阻止并注入结构化重规划提示；关闭时直接终止运行。
+  - name: max_degrade_attempts
+    type: number
+    required: false
+    default: 3
+    label:
+      en_US: Max consecutive degradations
+      zh_Hans: 最大连续降级次数
+    help:
+      en_US: Consecutive blocked calls allowed before the run halts. Prevents re-plan loops that never fit the budget.
+      zh_Hans: 允许的连续降级次数；超过后终止运行，防止"反复换方案仍超预算"的死循环。
+  - name: table_metadata
+    type: string
+    required: false
+    default: "{}"
+    label:
+      en_US: Table metadata (JSON)
+      zh_Hans: 表元数据（JSON）
+    help:
+      en_US: 'Row counts and access paths, e.g. {"orders": {"row_count": 1000000, "indexed_columns": ["id"], "partition_column": "dt"}}.'
+      zh_Hans: '行数与访问路径，例如 {"orders": {"row_count": 1000000, "indexed_columns": ["id"], "partition_column": "dt"}}。'
+  - name: database_tools
+    type: string
+    required: false
+    default: "[]"
+    label:
+      en_US: Database tools (JSON list)
+      zh_Hans: 数据库工具（JSON 数组）
+    help:
+      en_US: Tool names that must be treated as database queries even when their input has no SQL-like field.
+      zh_Hans: 即使入参没有 SQL 字段也应按数据库查询估算成本的工具名列表。
+  - name: unknown_cost
+    type: number
+    required: false
+    default: 40
+    label:
+      en_US: Unknown cost
+      zh_Hans: 未知成本
+    help:
+      en_US: Cost used when a database target table has no metadata (conservative high-cost signal).
+      zh_Hans: 数据库工具无法确定目标表/行数时采用的成本（保守高成本信号）。
+  - name: default_tool_cost
+    type: number
+    required: false
+    default: 15
+    label:
+      en_US: Default tool cost
+      zh_Hans: 默认工具成本
+    help:
+      en_US: Static cost for non-database tools that have no override.
+      zh_Hans: 未单独覆盖成本的非数据库工具使用的静态成本。
+  - name: max_iterations
+    type: number
+    required: false
+    default: 8
+    label:
+      en_US: Max planning iterations
+      zh_Hans: 最大规划迭代数
+    help:
+      en_US: Hard cap on plan/tool/observe cycles, independent of the budget guard.
+      zh_Hans: 规划-调用-观察循环的硬上限，独立于预算护栏。
+extra:
+  python:
+    source: strategies/cost_aware.py

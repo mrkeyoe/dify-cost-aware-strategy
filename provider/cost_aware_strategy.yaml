@@ -1,0 +1,15 @@
+identity:
+  author: mrkeyoe
+  name: cost_aware_strategy
+  label:
+    en_US: Cost-Aware Strategy
+    zh_Hans: 成本感知策略
+  description:
+    en_US: Estimate tool cost before each call and enforce a run budget with graceful degradation.
+    zh_Hans: 每次工具调用前估算成本，用预算硬约束 + 结构化降级提示替代高代价全表扫描。
+  icon: icon.svg
+strategies:
+  - strategies/cost_aware_strategy.yaml
+extra:
+  python:
+    source: provider/cost_aware_strategy.py

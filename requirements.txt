@@ -1,0 +1,12 @@
+# 运行时依赖说明
+#
+# 本插件的 **核心逻辑（core/）与测试只用 Python 标准库**：
+#   python -m unittest discover -s tests -v
+#
+# 真正在 Dify 里运行时，由 Dify 插件运行时（runner）提供 dify_plugin：
+#   dify-plugin>=0.0.1b70
+#
+# 本机开发环境未安装 dify_plugin，也**不**把联网 pip 安装当作交付前提，
+# 因此这里刻意不写入会被 `pip install -r requirements.txt` 强制安装的版本约束。
+# 需要本地联调时再执行（需要网络）：
+#   pip install "dify-plugin>=0.0.1b70"

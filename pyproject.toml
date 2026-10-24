@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dify-cost-aware-strategy"
+version = "0.1.0"
+description = "Budget-aware Dify agent strategy: relative query cost estimation, hard budget guard and structured degradation prompts."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "mrkeyoe" }]
+keywords = ["dify", "dify-plugin", "agent-strategy", "cost", "budget", "sql"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+# 运行时的 dify_plugin 由 Dify 插件运行时提供；core/ 与 tests/ 只用标准库。
+dependencies = []
+
+[project.optional-dependencies]
+# 仅用于本地把包跑进真实 Dify runner（本机未安装、也未验证）
+dify = ["dify-plugin"]
+
+[tool.setuptools]
+packages = ["core", "strategies"]
+py-modules = ["main"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
